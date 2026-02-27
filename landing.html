@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiyyallu | Smart Assistant</title>
+    <style>
+        :root {
+            --bg-color: #0B0F19;
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF;
+            --accent: #D97706; /* Warm Gold */
+            --card-bg: #111827;
+            --input-bg: #1F2937;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+        .form-container {
+            background: var(--card-bg); width: 100%; max-width: 600px;
+            padding: 40px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- Progress Bar --- */
+        .progress-container { margin-bottom: 30px; }
+        .progress-bar { width: 100%; height: 6px; background: var(--input-bg); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent); width: 33.33%; transition: width 0.4s ease; }
+        .step-indicator { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); }
+
+        /* --- Form Steps --- */
+        .form-step { display: none; animation: fadeIn 0.4s ease forwards; }
+        .form-step.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { margin-bottom: 10px; font-size: 1.8rem; }
+        p.subtitle { color: var(--text-muted); margin-bottom: 24px; font-size: 0.95rem; }
+
+        /* --- Inputs & Selections --- */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .option-card {
+            background: var(--input-bg); border: 2px solid transparent; padding: 20px;
+            border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s;
+        }
+        .option-card:hover { border-color: rgba(217,119,6,0.5); }
+        .option-card.selected { border-color: var(--accent); background: rgba(217,119,6,0.1); }
+        
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); }
+        input[type="number"], input[type="date"], select {
+            width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+            background: var(--input-bg); color: var(--text-main); font-size: 1rem; outline: none; transition: border 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--accent); }
+
+        /* --- Buttons --- */
+        .btn-group { display: flex; justify-content: space-between; margin-top: 30px; }
+        button { padding: 12px 24px; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-prev { background: transparent; color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); }
+        .btn-prev:hover { background: rgba(255,255,255,0.05); }
+        .btn-next { background: var(--accent); color: var(--bg-color); border: none; }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(217,119,6,0.3); }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+            <div class="step-indicator">
+                <span>Event Type</span><span>Logistics</span><span>Budget</span>
+            </div>
+        </div>
+
+        <form id="assistForm">
+            <div class="form-step active" id="step1">
+                <h2>What kind of event are you planning?</h2>
+                <p class="subtitle">This helps us tailor the venue vibes to your needs.</p>
+                <div class="options-grid">
+                    <div class="option-card" onclick="selectOption(this, 'eventType', 'cultural')">
+                        <h3>🎉 Cultural</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Weddings, Festivals, Family</p>
+                    </div>
+                    <div class="option-card" onclick="selectOption(this, 'eventType', 'professional')">
+                        <h3>💼 Professional</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Corporate, Seminars, Mixers</p>
+                    </div>
+                </div>
+                <input type="hidden" id="eventType" value="">
+                <div class="btn-group" style="justify-content: flex-end;">
+                    <button type="button" class="btn-next" onclick="nextStep(1)">Next Step &rarr;</button>
+                </div>
+            </div>
+
+            <div class="form-step" id="step2">
+                <h2>The important details.</h2>
+                <p class="subtitle">Let's find spaces that actually fit your crowd and schedule.</p>
+                <div class="input-group">
+                    <label>Estimated Guest Count</label>
+                    <input type="number" placeholder="e.g., 150" required>
+                </div>
+                <div class="input-group">
+                    <label>Preferred Date</label>
+                    <input type="date" required>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn-prev" onclick="prevStep(2)">&larr; Back</button>
+                    <button type="button" class="btn-next" onclick="nextStep(2)">Next Step &rarr;</button>
+                </div>
+            </div>
+
+            <div class="form-step" id="step3">
+                <h2>Set your budget and preferences.</h2>
+                <p class="subtitle">We'll only suggest options that make financial sense for you.</p>
+                <div class="input-group">
+                    <label>Overall Budget Range</label>
+                    <select>
+                        <option value="economy">Economy (Smart & Simple)</option>
+                        <option value="standard" selected>Standard (Great Value)</option>
+                        <option value="premium">Premium (Elevated Experience)</option>
+                        <option value="luxury">Luxury (No Expenses Spared)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Do you need catering included?</label>
+                    <select>
+                        <option value="yes">Yes, suggest venues with catering</option>
+                        <option value="no">No, I will book a separate caterer</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn-prev" onclick="prevStep(3)">&larr; Back</button>
+                    <button type="button" class="btn-next" onclick="submitForm()">Find My Matches ✨</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // UI Logic for stepping through the form
+        function nextStep(currentStep) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${currentStep + 1}`).classList.add('active');
+            updateProgress(currentStep + 1);
+        }
+
+        function prevStep(currentStep) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${currentStep - 1}`).classList.add('active');
+            updateProgress(currentStep - 1);
+        }
+
+        function updateProgress(step) {
+            const progressFill = document.getElementById('progress');
+            if(step === 1) progressFill.style.width = '33.33%';
+            if(step === 2) progressFill.style.width = '66.66%';
+            if(step === 3) progressFill.style.width = '100%';
+        }
+
+        // Logic for selectable cards in Step 1
+        function selectOption(element, inputId, value) {
+            const cards = element.parentElement.querySelectorAll('.option-card');
+            cards.forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById(inputId).value = value;
+        }
+
+        function submitForm() {
+            // In a real app, this would send data to your backend
+            alert("Analyzing your inputs... Preparing curated matches!");
+            // window.location.href = "results.html"; // Redirect to results page
+        }
+    </script>
+</body>
+</html>
