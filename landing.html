@@ -3,180 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thiyyallu | Smart Assistant</title>
+    <title>Thiyallu | Elite Event Curation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0B0F19;
-            --text-main: #F3F4F6;
-            --text-muted: #9CA3AF;
-            --accent: #D97706; /* Warm Gold */
-            --card-bg: #111827;
-            --input-bg: #1F2937;
+            --bg: #050505;
+            --surface: #0f0f0f;
+            --text: #ffffff;
+            --text-dim: #888888;
+            --gold-accent: #d4af37; /* Sophisticated gold highlights */
+            --glow: rgba(212, 175, 55, 0.4);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
 
-        .form-container {
-            background: var(--card-bg); width: 100%; max-width: 600px;
-            padding: 40px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.05);
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
 
-        /* --- Progress Bar --- */
-        .progress-container { margin-bottom: 30px; }
-        .progress-bar { width: 100%; height: 6px; background: var(--input-bg); border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--accent); width: 33.33%; transition: width 0.4s ease; }
-        .step-indicator { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); }
-
-        /* --- Form Steps --- */
-        .form-step { display: none; animation: fadeIn 0.4s ease forwards; }
-        .form-step.active { display: block; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* --- Custom Interactive Cursor --- */
+        #cursor {
+            width: 10px; height: 10px;
+            background: white; border-radius: 50%;
+            position: fixed; pointer-events: none;
+            z-index: 9999; mix-blend-mode: difference;
         }
 
-        h2 { margin-bottom: 10px; font-size: 1.8rem; }
-        p.subtitle { color: var(--text-muted); margin-bottom: 24px; font-size: 0.95rem; }
-
-        /* --- Inputs & Selections --- */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .option-card {
-            background: var(--input-bg); border: 2px solid transparent; padding: 20px;
-            border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s;
+        /* --- Navigation --- */
+        nav {
+            position: fixed; width: 100%; top: 0;
+            display: flex; justify-content: space-between;
+            padding: 40px 60px; z-index: 100;
+            font-size: 0.7rem; letter-spacing: 4px;
         }
-        .option-card:hover { border-color: rgba(217,119,6,0.5); }
-        .option-card.selected { border-color: var(--accent); background: rgba(217,119,6,0.1); }
-        
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); }
-        input[type="number"], input[type="date"], select {
-            width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
-            background: var(--input-bg); color: var(--text-main); font-size: 1rem; outline: none; transition: border 0.3s;
-        }
-        input:focus, select:focus { border-color: var(--accent); }
 
-        /* --- Buttons --- */
-        .btn-group { display: flex; justify-content: space-between; margin-top: 30px; }
-        button { padding: 12px 24px; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .btn-prev { background: transparent; color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); }
-        .btn-prev:hover { background: rgba(255,255,255,0.05); }
-        .btn-next { background: var(--accent); color: var(--bg-color); border: none; }
-        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(217,119,6,0.3); }
-        
-        .hidden { display: none !important; }
+        .nav-links a {
+            color: white; text-decoration: none; margin-left: 40px;
+            text-transform: uppercase; transition: 0.3s;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh; width: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            position: relative; overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 12vw, 9rem);
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -2px; z-index: 5;
+            text-align: center; pointer-events: none;
+        }
+
+        /* --- The Highlighted Globe --- */
+        .globe-container {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            perspective: 1000px;
+        }
+
+        .highlight-globe {
+            width: 550px; height: 550px;
+            border-radius: 50%;
+            position: relative;
+            /* Stronger glowing effect */
+            box-shadow: inset 0 0 100px var(--glow), 0 0 50px rgba(0,0,0,1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 80%);
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* Latitudinal and Longitudinal Lines */
+        .globe-line {
+            position: absolute; width: 100%; height: 100%;
+            border-radius: 50%; border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .line-v { transform: rotateY(60deg); }
+        .line-v2 { transform: rotateY(-60deg); }
+        .line-h { transform: rotateX(80deg); }
+
+        /* --- Animated Content Sections --- */
+        .section {
+            min-height: 100vh; padding: 150px 10%;
+            position: relative; z-index: 10;
+        }
+
+        .category-row {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 40px; margin-top: 100px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 80px 50px; border-radius: 2px;
+            transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(212, 175, 55, 0.05);
+            border-color: var(--gold-accent);
+            transform: translateY(-20px);
+        }
+
+        .glass-card h2 {
+            font-size: 0.8rem; letter-spacing: 5px;
+            color: var(--gold-accent); margin-bottom: 20px;
+        }
+
+        .glass-card p {
+            font-size: 1.5rem; line-height: 1.4; font-weight: 200;
+        }
+
+        /* Moving shapes in background */
+        .floating-orb {
+            position: absolute; border-radius: 50%;
+            background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+            filter: blur(60px); pointer-events: none;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="form-container">
-        <div class="progress-container">
-            <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-            <div class="step-indicator">
-                <span>Event Type</span><span>Logistics</span><span>Budget</span>
+    <div id="cursor"></div>
+
+    <nav>
+        <div class="logo">THIYALLU</div>
+        <div class="nav-links">
+            <a href="#">Venues</a>
+            <a href="#">Catering</a>
+            <a href="#">Assistant</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="globe-container">
+            <div class="highlight-globe" id="heroGlobe">
+                <div class="globe-line line-v"></div>
+                <div class="globe-line line-v2"></div>
+                <div class="globe-line line-h"></div>
             </div>
         </div>
+        <h1 class="hero-title">THIYALLU</h1>
+    </section>
 
-        <form id="assistForm">
-            <div class="form-step active" id="step1">
-                <h2>What kind of event are you planning?</h2>
-                <p class="subtitle">This helps us tailor the venue vibes to your needs.</p>
-                <div class="options-grid">
-                    <div class="option-card" onclick="selectOption(this, 'eventType', 'cultural')">
-                        <h3>🎉 Cultural</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Weddings, Festivals, Family</p>
-                    </div>
-                    <div class="option-card" onclick="selectOption(this, 'eventType', 'professional')">
-                        <h3>💼 Professional</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Corporate, Seminars, Mixers</p>
-                    </div>
-                </div>
-                <input type="hidden" id="eventType" value="">
-                <div class="btn-group" style="justify-content: flex-end;">
-                    <button type="button" class="btn-next" onclick="nextStep(1)">Next Step &rarr;</button>
-                </div>
+    <section class="section">
+        <div class="floating-orb" id="orb1" style="width: 400px; height: 400px; top: 10%; right: -5%;"></div>
+        
+        <div class="category-row">
+            <div class="glass-card scroll-reveal">
+                <h2>.01</h2>
+                <p>Curated Luxury Venues <br> Across the Globe.</p>
             </div>
-
-            <div class="form-step" id="step2">
-                <h2>The important details.</h2>
-                <p class="subtitle">Let's find spaces that actually fit your crowd and schedule.</p>
-                <div class="input-group">
-                    <label>Estimated Guest Count</label>
-                    <input type="number" placeholder="e.g., 150" required>
-                </div>
-                <div class="input-group">
-                    <label>Preferred Date</label>
-                    <input type="date" required>
-                </div>
-                <div class="btn-group">
-                    <button type="button" class="btn-prev" onclick="prevStep(2)">&larr; Back</button>
-                    <button type="button" class="btn-next" onclick="nextStep(2)">Next Step &rarr;</button>
-                </div>
+            <div class="glass-card scroll-reveal" style="margin-top: 100px;">
+                <h2>.02</h2>
+                <p>Bespoke Culinary <br> Arts & Catering.</p>
             </div>
-
-            <div class="form-step" id="step3">
-                <h2>Set your budget and preferences.</h2>
-                <p class="subtitle">We'll only suggest options that make financial sense for you.</p>
-                <div class="input-group">
-                    <label>Overall Budget Range</label>
-                    <select>
-                        <option value="economy">Economy (Smart & Simple)</option>
-                        <option value="standard" selected>Standard (Great Value)</option>
-                        <option value="premium">Premium (Elevated Experience)</option>
-                        <option value="luxury">Luxury (No Expenses Spared)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Do you need catering included?</label>
-                    <select>
-                        <option value="yes">Yes, suggest venues with catering</option>
-                        <option value="no">No, I will book a separate caterer</option>
-                    </select>
-                </div>
-                <div class="btn-group">
-                    <button type="button" class="btn-prev" onclick="prevStep(3)">&larr; Back</button>
-                    <button type="button" class="btn-next" onclick="submitForm()">Find My Matches ✨</button>
-                </div>
-            </div>
-        </form>
-    </div>
+        </div>
+    </section>
 
     <script>
-        // UI Logic for stepping through the form
-        function nextStep(currentStep) {
-            document.getElementById(`step${currentStep}`).classList.remove('active');
-            document.getElementById(`step${currentStep + 1}`).classList.add('active');
-            updateProgress(currentStep + 1);
-        }
+        gsap.registerPlugin(ScrollTrigger);
 
-        function prevStep(currentStep) {
-            document.getElementById(`step${currentStep}`).classList.remove('active');
-            document.getElementById(`step${currentStep - 1}`).classList.add('active');
-            updateProgress(currentStep - 1);
-        }
+        // 1. Mouse Follow Cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+        });
 
-        function updateProgress(step) {
-            const progressFill = document.getElementById('progress');
-            if(step === 1) progressFill.style.width = '33.33%';
-            if(step === 2) progressFill.style.width = '66.66%';
-            if(step === 3) progressFill.style.width = '100%';
-        }
+        // 2. Interactive Globe Animation
+        // Constant rotation
+        gsap.to(".globe-line", {
+            rotationY: "+=360",
+            duration: 15,
+            repeat: -1,
+            ease: "none"
+        });
 
-        // Logic for selectable cards in Step 1
-        function selectOption(element, inputId, value) {
-            const cards = element.parentElement.querySelectorAll('.option-card');
-            cards.forEach(card => card.classList.remove('selected'));
-            element.classList.add('selected');
-            document.getElementById(inputId).value = value;
-        }
+        // Scroll-driven Globe Highlight & Movement
+        gsap.to("#heroGlobe", {
+            scrollTrigger: {
+                trigger: ".hero",
+                start: "top top",
+                end: "bottom top",
+                scrub: 1,
+            },
+            scale: 2.2,
+            y: 500,
+            boxShadow: "inset 0 0 150px rgba(212, 175, 55, 0.8)",
+            opacity: 0.2,
+            filter: "blur(5px)"
+        });
 
-        function submitForm() {
-            // In a real app, this would send data to your backend
-            alert("Analyzing your inputs... Preparing curated matches!");
-            // window.location.href = "results.html"; // Redirect to results page
-        }
+        // 3. Floating Background Objects (Moving as we scroll)
+        gsap.to("#orb1", {
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 2,
+            },
+            y: -800,
+            x: -200,
+            scale: 1.5
+        });
+
+        // 4. Staggered Card Reveal
+        const reveals = document.querySelectorAll('.scroll-reveal');
+        reveals.forEach((el) => {
+            gsap.from(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 90%",
+                    end: "top 60%",
+                    scrub: 1,
+                },
+                opacity: 0,
+                y: 100,
+                scale: 0.9,
+                duration: 1
+            });
+        });
+
+        // 5. Title Parallax
+        gsap.to(".hero-title", {
+            scrollTrigger: {
+                trigger: ".hero",
+                start: "top top",
+                end: "bottom top",
+                scrub: 0.5,
+            },
+            y: -150,
+            opacity: 0
+        });
+
     </script>
 </body>
 </html>
