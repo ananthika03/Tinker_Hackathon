@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiyallu | Sign In</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030303;
+            --accent: #d4af37;
+            --accent-glow: rgba(212, 175, 55, 0.4);
+            --glass: rgba(10, 10, 10, 0.75);
+            --glass-border: rgba(212, 175, 55, 0.2);
+            --text: #ffffff;
+            --text-dim: #777777;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif; /* Consistent Font */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Premium Particle Canvas --- */
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* --- Glass Login Card --- */
+        .login-card {
+            width: 400px;
+            padding: 60px 45px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.9);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif; /* Identical Font */
+            color: var(--accent);
+            letter-spacing: 7px;
+            font-size: 1.3rem;
+            margin-bottom: 50px;
+            display: block;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Standard Toggle */
+        .role-selector {
+            display: flex;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px;
+            border-radius: 2px;
+            margin-bottom: 35px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--text-dim);
+            border: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .role-btn.active {
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+        }
+
+        /* Form Controls */
+        .form-group { margin-bottom: 25px; text-align: left; }
+        
+        label { 
+            font-size: 0.6rem; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            display: block; 
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .forgot-link:hover { color: var(--accent); }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: 0.4s;
+        }
+
+        .btn-primary:hover {
+            letter-spacing: 6px;
+            background: #fff;
+        }
+
+        /* Social Auth */
+        .divider {
+            margin: 35px 0;
+            display: flex;
+            align-items: center;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+            margin: 0 15px;
+        }
+
+        .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .btn-social {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 12px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-social:hover { background: rgba(255, 255, 255, 0.05); border-color: #fff; }
+
+        .footer-text {
+            margin-top: 35px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .footer-text a { color: var(--accent); text-decoration: none; font-weight: 700; }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="login-card">
+        <div class="logo">THIYALLU</div>
+
+        <div class="role-selector">
+            <button class="role-btn active" onclick="updateRole('Customer', this)">Customer</button>
+            <button class="role-btn" onclick="updateRole('Provider', this)">Provider</button>
+        </div>
+
+        <h2 id="form-title" style="font-family: 'Poppins'; font-size: 1rem; letter-spacing: 3px; margin-bottom: 30px; text-transform: uppercase;">Customer Login</h2>
+
+        <form>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" placeholder="name@domain.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" placeholder="••••••••" required>
+                <a href="#" class="forgot-link">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn-primary">Login</button>
+        </form>
+
+        <div class="divider">Or Continue With</div>
+
+        <div class="social-grid">
+            <button class="btn-social">Google</button>
+            <button class="btn-social">Apple</button>
+        </div>
+
+        <p class="footer-text">Don't have an account? <a href="#">Sign Up</a></p>
+    </div>
+
+    <script>
+        // --- 1. Role Switching Logic ---
+        function updateRole(role, btn) {
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const title = document.getElementById('form-title');
+            gsap.to(title, { opacity: 0, y: 10, duration: 0.2, onComplete: () => {
+                title.innerText = `${role} Login`;
+                gsap.to(title, { opacity: 1, y: 0, duration: 0.3 });
+            }});
+        }
+
+        // --- 2. Particle Constellation Logic ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 1.5;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#d4af37';
+                ctx.fill();
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < 80; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                
+                // Draw connections
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(212, 175, 55, ${0.15 - dist/150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+
+        // Entrance animation
+        gsap.from(".login-card", { opacity: 0, scale: 0.9, duration: 1.5, ease: "expo.out" });
+    </script>
+</body>
+</html>
