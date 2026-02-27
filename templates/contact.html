@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact | Thiyallu</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #030303; --accent: #d4af37; --text: #ffffff; --border: rgba(212, 175, 55, 0.2); }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
+        #cursor{width:6px;height:6px;background:white;border-radius:50%;position:fixed;pointer-events:none;z-index:99999;mix-blend-mode:difference;}
+        #cursor-follower{width:40px;height:40px;border:1px solid var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:99998;opacity:0.4;transition:0.2s;}
+
+        .contact-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 8%; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; width: 100%; max-width: 1200px; }
+        
+        h1 { font-family: 'Poppins'; font-size: 4rem; line-height: 1; letter-spacing: -3px; margin-bottom: 30px; }
+        .contact-info p { color: #666; font-size: 1.1rem; line-height: 1.8; margin-bottom: 40px; }
+        
+        .form-group { margin-bottom: 30px; }
+        label { display: block; font-size: 0.6rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+        input, textarea { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border); padding: 12px 0; color: white; outline: none; transition: 0.3s; }
+        input:focus, textarea:focus { border-bottom-color: var(--accent); }
+        
+        .send-btn { background: var(--accent); color: black; border: none; padding: 20px 60px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; margin-top: 20px; transition: 0.4s; }
+        .send-btn:hover { background: white; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div id="cursor"></div><div id="cursor-follower"></div>
+
+    <section class="contact-container">
+        <div class="contact-grid">
+            <div class="contact-info">
+                <span style="color:var(--accent); letter-spacing:5px; font-size:0.7rem;">CONNECT</span>
+                <h1>Let’s build <br> something <br> legendary.</h1>
+                <p>Have a vision for your next milestone? Our curators are ready to dismantle the chaos and deliver perfection.</p>
+                <div style="margin-top:50px;">
+                    <div style="margin-bottom:20px;">Email: hello@thiyallu.com</div>
+                    <div>Location: Kochi, Kerala, India</div>
+                </div>
+            </div>
+            <div class="contact-form">
+                <form>
+                    <div class="form-group"><label>Full Name</label><input type="text"></div>
+                    <div class="form-group"><label>Email Address</label><input type="email"></div>
+                    <div class="form-group"><label>Event Date</label><input type="date"></div>
+                    <div class="form-group"><label>Your Vision</label><textarea rows="4"></textarea></div>
+                    <button type="submit" class="send-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const _cur = document.getElementById('cursor');
+        const _fol = document.getElementById('cursor-follower');
+        document.addEventListener('mousemove', e => {
+            gsap.to(_cur, { x: e.clientX, y: e.clientY, duration: 0 });
+            gsap.to(_fol, { x: e.clientX, y: e.clientY, duration: 0.25 });
+        });
+    </script>
+</body>
+</html>
