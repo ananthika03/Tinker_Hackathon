@@ -1,34 +1,27 @@
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, redirect, url_for
+from models import db, Venue  # Import the db and Venue model
 
 app = Flask(__name__)
 
+# Configure the SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///event_booking.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize the database with the app
+db.init_app(app)
+
+# Create the database tables automatically
+with app.app_context():
+    db.create_all()
+
 @app.route('/')
 def index():
-    return render_template('landing.html') # Main Landing Page
+    return render_template('landing.html') # This matches your landing page file
 
-@app.route('/venues')
-def venues():
-    return render_template('venues.html')
-
-@app.route('/catering')
-def catering():
-    return render_template('catering.html')
-
-@app.route('/visual')
-def visual():
-    return render_template('visual.html')
-
-@app.route('/architecture')
-def architecture():
-    return render_template('architecture.html')
-
-@app.route('/onboarding')
-def onboarding():
-    return render_template('providerdash.html')
-
-@app.route('/contact')
-def contact():
-    return render_template('contact.html') # New Contact Page
+# Route for the login page
+@app.route('/login')
+def login():
+    return render_template('login.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
