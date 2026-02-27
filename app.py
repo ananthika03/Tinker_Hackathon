@@ -36,7 +36,7 @@ def architecture():
 
 @app.route('/visuals')
 def visuals():
-    return render_template('visuals.html')
+    return render_template('visual.html')
 
 
 
