@@ -1,10 +1,12 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for
 from models import db, Venue, Service
+from flask import session, redirect, url_for
 
 app = Flask(__name__)
 
 # Database Configuration
+app.secret_key = 'super_secret_key_change_this_later'
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'event_booking.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -69,6 +71,11 @@ def contact():
     if request.method == 'POST':
         return redirect(url_for('index'))
     return render_template('contact.html')
-
+@app.route('/logout')
+def logout():
+   
+    session.clear()
+    
+    return redirect(url_for('start'))
 if __name__ == '__main__':
     app.run(debug=True)
