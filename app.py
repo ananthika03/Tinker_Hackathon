@@ -1,47 +1,56 @@
 from flask import Flask, render_template, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from models import db, Venue, Service
 
 app = Flask(__name__)
 
-# Using SQLite (Zero-install database)
+# SQLite configuration: No installation needed, creates a local file
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///event_booking.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db.init_app(app)
 
-# --- DATABASE MODELS ---
-class Venue(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    location = db.Column(db.String(100))
-    capacity = db.Column(db.Integer)
-    price = db.Column(db.Float)
-    image_url = db.Column(db.String(500))
-
-# Initialize DB
+# Create the database and tables automatically on startup
 with app.app_context():
     db.create_all()
 
-# --- ROUTES ---
+# --- WEB PAGE ROUTES ---
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
-@app.route('/login')
-def login_choice():
-    return render_template('login_choice.html')
+@app.route('/browse')
+def browse_page():
+    return render_template('customer_browse.html')
+
+# --- API ENDPOINTS (The "Brain") ---
+
+@app.route('/api/venues', methods=['GET'])
+def get_venues():
+    """Returns all venues for the browsing page"""
+    venues = Venue.query.all()
+    return jsonify([{
+        "id": v.id, "name": v.name, "location": v.location,
+        "capacity": v.capacity, "price": v.price, 
+        "category": v.category, "contact": v.contact
+    } for v in venues])
 
 @app.route('/api/assist', methods=['POST'])
-def assist_logic():
+def assist_feature():
+    """Rule-based scoring for recommendations"""
     data = request.json
     budget = float(data.get('budget', 0))
     guests = int(data.get('guests', 0))
     
-    # Simple Logic: Filter by guests, sort by price closest to budget
+    # 1. Filter: Find venues that can actually hold the guest count
     matches = Venue.query.filter(Venue.capacity >= guests).all()
+    
+    # 2. Score: Rank by how close the price is to the user's budget
+    # The 'abs()' function finds the difference; smaller is better
     recommendations = sorted(matches, key=lambda v: abs(v.price - budget))
     
-    return jsonify([{"name": r.name, "price": r.price} for r in recommendations[:2]])
+    return jsonify([{
+        "name": r.name, "price": r.price, "location": r.location
+    } for r in recommendations[:2]]) # Return top 2
 
 if __name__ == '__main__':
     app.run(debug=True)
