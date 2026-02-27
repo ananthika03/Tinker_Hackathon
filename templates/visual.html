@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visual Storytelling | Thiyallu</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#030303;--text:#ffffff;--text-dim:#444444;--text-mid:#888888;--accent:#d4af37;--accent-dim:#a08820;--glow:rgba(212,175,55,0.6);--card-bg:#080808;--border:#1a1a1a;--border-gold:rgba(212,175,55,0.3);}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;}
+
+/* --- Interactive Elements --- */
+#cursor{width:6px;height:6px;background:white;border-radius:50%;position:fixed;pointer-events:none;z-index:99999;mix-blend-mode:difference;transform:translate(-50%,-50%);}
+#cursor-follower{width:40px;height:40px;border:1px solid var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:99998;opacity:0.4;transition:0.2s;transform:translate(-50%,-50%);}
+#cursor-follower.hovered{width:60px;height:60px;opacity:0.7;background:rgba(212,175,55,0.1);}
+
+/* --- Clean Navigation (No Underlines) --- */
+nav{position:fixed;width:100%;top:0;display:flex;justify-content:space-between;align-items:center;padding:38px 60px;z-index:1000;font-size:0.65rem;letter-spacing:5px;background:linear-gradient(to bottom,rgba(3,3,3,0.97) 0%,transparent 100%);}
+.logo{font-family:'Poppins',sans-serif;font-weight:700;color:var(--accent);font-size:0.85rem;letter-spacing:6px;text-decoration:none;border:none;} /* Explicitly removed borders/lines */
+.nav-links a{color:white;margin-left:38px;text-transform:uppercase;opacity:0.45;transition:0.4s;font-size:0.6rem;letter-spacing:4px;text-decoration:none;border:none;}
+.nav-links a:hover,.nav-links a.active{opacity:1;color:var(--accent);border:none;}
+
+/* --- Hero Section --- */
+.page-hero{height:72vh;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:80px 8%;}
+.page-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:grayscale(0.5) brightness(0.28);transition:2s;}
+.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(3,3,3,1) 0%,rgba(3,3,3,0.2) 65%,transparent 100%);}
+.page-hero-content{position:relative;z-index:5;width:100%;}
+.page-cat{font-size:0.6rem;letter-spacing:6px;color:var(--accent);text-transform:uppercase;margin-bottom:14px;}
+.page-h1{font-family:'Poppins',sans-serif;font-size:clamp(3rem,8vw,7rem);font-weight:600;line-height:0.88;letter-spacing:-3px;}
+.page-sub{font-size:0.72rem;color:var(--text-mid);letter-spacing:2px;margin-top:18px;max-width:520px;line-height:1.9;font-weight:200;}
+
+/* --- Visual Grid --- */
+.providers-section{padding:80px 8% 40px;}
+.section-label{font-size:0.6rem;letter-spacing:5px;color:var(--accent);text-transform:uppercase;margin-bottom:50px;display:flex;align-items:center;gap:20px;}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--border-gold),transparent);}
+
+.providers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(450px,1fr));gap:30px;}
+.visual-card{background:var(--card-bg);border:1px solid var(--border);position:relative;overflow:hidden;transition:0.6s cubic-bezier(0.16,1,0.3,1);}
+.visual-card:hover{border-color:var(--accent);transform:translateY(-10px);}
+.visual-img-wrap{height:550px;overflow:hidden;cursor:zoom-in;}
+.visual-img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1) brightness(0.4);transition:1.2s cubic-bezier(0.16,1,0.3,1);}
+.visual-card:hover .visual-img{filter:grayscale(0) brightness(0.8);transform:scale(1.05);}
+
+.visual-info{position:absolute;bottom:0;left:0;right:0;padding:40px;background:linear-gradient(to top, rgba(3,3,3,0.95), transparent);z-index:2;}
+.visual-name{font-family:'Poppins',sans-serif;font-size:1.8rem;margin-bottom:8px;font-weight:600;}
+.visual-specialty{font-size:0.65rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;}
+.visual-footer{display:flex;justify-content:space-between;align-items:center;opacity:0;transform:translateY(20px);transition:0.5s;}
+.visual-card:hover .visual-footer{opacity:1;transform:translateY(0);}
+
+.btn-legacy{background:var(--accent);color:var(--bg);border:none;padding:12px 28px;font-size:0.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+.price-start{font-size:0.8rem;letter-spacing:1px;color:var(--text-mid);}
+.price-start span{color:var(--text);font-weight:700;}
+
+/* --- Lightbox --- */
+.lightbox{position:fixed;inset:0;z-index:9500;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.98);backdrop-filter:blur(15px);}
+.lightbox.open{display:flex;}
+.lightbox-img{max-width:85vw;max-height:80vh;border:1px solid var(--accent-dim);}
+.lb-close{position:absolute;top:40px;right:40px;color:var(--accent);font-size:2rem;cursor:pointer;background:none;border:none;}
+
+footer{border-top:1px solid var(--border);padding:40px 60px;display:flex;justify-content:space-between;color:var(--text-dim);font-size:0.6rem;letter-spacing:3px;margin-top:100px;}
+.fade-in{opacity:0;transform:translateY(30px);transition:0.8s ease forwards;}
+.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-follower"></div>
+
+<div class="lightbox" id="lightbox">
+    <button class="lb-close" onclick="closeLightbox()">✕</button>
+    <img src="" class="lightbox-img" id="lightboxImg">
+</div>
+
+<nav>
+  <a href="../index.html" class="logo">THIYALLU</a>
+  <div class="nav-links">
+      <a href="venues.html">Venues</a>
+      <a href="gourmet.html">Gourmet</a>
+      <a href="visual.html" class="active">Visual</a>
+      <a href="architecture.html">Architecture</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1600')"></div>
+  <div class="page-hero-overlay"></div>
+  <div class="page-hero-content">
+    <div class="page-cat">Home &nbsp;/&nbsp; 03 · Visual</div>
+    <h1 class="page-h1">Visual Storytelling</h1>
+    <p class="page-sub">Preserving the ephemeral light of your legacy. High-cinematography and elite photography curated for those who value the art of a moment.</p>
+  </div>
+</div>
+
+<div class="providers-section">
+  <div class="section-label fade-in">Select Your Storyteller</div>
+  <div class="providers-grid">
+
+    <div class="visual-card fade-in">
+        <div class="visual-img-wrap" onclick="openLightbox('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1200')">
+            <img class="visual-img" src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1200" alt="Magic Motion">
+        </div>
+        <div class="visual-info">
+            <div class="visual-specialty">Cinematic Films · Fine Art</div>
+            <div class="visual-name">Magic Motion Media</div>
+            <div class="visual-footer">
+                <div class="price-start">From <span>₹1,50,000</span></div>
+                <button class="btn-legacy">Reserve Date</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="visual-card fade-in">
+        <div class="visual-img-wrap" onclick="openLightbox('https://images.unsplash.com/photo-1604017011826-d3b4c23f8914?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8d2VkZGluZyUyMHBob3RvZ3JhcGh5fGVufDB8fDB8fHww')">
+            <img class="visual-img" src="https://images.pexels.com/photos/3064713/pexels-photo-3064713.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Blackhole">
+        </div>
+        <div class="visual-info">
+            <div class="visual-specialty">Journalistic · Candid</div>
+            <div class="visual-name">Blackhole Weddings</div>
+            <div class="visual-footer">
+                <div class="price-start">From <span>₹25,000</span></div>
+                <button class="btn-legacy">Reserve Date</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="visual-card fade-in">
+        <div class="visual-img-wrap" onclick="openLightbox('https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1200')">
+            <img class="visual-img" src="https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1200" alt="Weva">
+        </div>
+        <div class="visual-info">
+            <div class="visual-specialty">International · Elite Weddings</div>
+            <div class="visual-name">Weva Photography</div>
+            <div class="visual-footer">
+                <div class="price-start">From <span>₹2,00,000</span></div>
+                <button class="btn-legacy">Reserve Date</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="visual-card fade-in">
+        <div class="visual-img-wrap" onclick="openLightbox('https://images.unsplash.com/photo-1492691523567-6273c540913a?q=80&w=1200')">
+            <img class="visual-img" src="https://images.unsplash.com/photo-1492691523567-6273c540913a?q=80&w=1200" alt="Jackson James">
+        </div>
+        <div class="visual-info">
+            <div class="visual-specialty">Fashion · Cinematic Portraits</div>
+            <div class="visual-name">Jackson James Photography</div>
+            <div class="visual-footer">
+                <div class="price-start">From <span>₹1,20,000</span></div>
+                <button class="btn-legacy">Reserve Date</button>
+            </div>
+        </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+    <span>THIYALLU &nbsp;·&nbsp; LEGACY ARCHIVE</span>
+    <span style="color:var(--accent)">KERALA 2026</span>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const _cur = document.getElementById('cursor');
+const _fol = document.getElementById('cursor-follower');
+document.addEventListener('mousemove', e => {
+  gsap.to(_cur, { x: e.clientX, y: e.clientY, duration: 0 });
+  gsap.to(_fol, { x: e.clientX, y: e.clientY, duration: 0.25 });
+});
+document.querySelectorAll('button, a, .visual-img-wrap').forEach(el => {
+  el.addEventListener('mouseenter', () => _fol.classList.add('hovered'));
+  el.addEventListener('mouseleave', () => _fol.classList.remove('hovered'));
+});
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+function openLightbox(src){ const lb = document.getElementById('lightbox'); const lbImg = document.getElementById('lightboxImg'); lbImg.src = src; lb.classList.add('open'); }
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
+gsap.from('.page-h1', {y:100, opacity:0, duration:1.5, ease:'power4.out', delay:0.2});
+</script>
+</body>
+</html>
