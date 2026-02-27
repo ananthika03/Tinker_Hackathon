@@ -8,23 +8,23 @@ def index():
 
 @app.route('/venues')
 def venues():
-    return render_template('venues.html') # Venues Page
+    return render_template('venues.html')
 
-@app.route('/gourmet')
+@app.route('/catering')
 def catering():
-    return render_template('catering.html') # Catering Page
+    return render_template('catering.html')
 
 @app.route('/visual')
 def visual():
-    return render_template('visual.html') # Photography Page
+    return render_template('visual.html')
 
 @app.route('/architecture')
 def architecture():
-    return render_template('architecture.html') # Planning Page
+    return render_template('architecture.html')
 
 @app.route('/onboarding')
 def onboarding():
-    return render_template('providerdash.html') # Partner Page
+    return render_template('providerdash.html')
 
 @app.route('/contact')
 def contact():
