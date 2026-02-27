@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiyallu | Join the Orchestration</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030303;
+            --surface: #0a0a0a;
+            --accent: #d4af37;
+            --text: #ffffff;
+            --text-dim: #666666;
+            --border: rgba(212, 175, 55, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            font-family: 'Inter', sans-serif; 
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        header { text-align: center; margin-bottom: 40px; }
+        .label { color: var(--accent); font-size: 0.7rem; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        h1 { font-family: 'Poppins', sans-serif; font-size: 2.5rem; }
+
+        /* Selection Grid */
+        .selection-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 20px; 
+        }
+        
+        .service-card { 
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            height: 280px; 
+            position: relative; 
+            overflow: hidden; 
+            cursor: pointer; 
+            transition: 0.4s ease;
+        }
+        
+        .service-card:hover { border-color: var(--accent); transform: scale(1.02); }
+        
+        .card-img { 
+            width: 100%; height: 100%; 
+            background-size: cover; 
+            background-position: center; 
+            opacity: 0.4; /* Increased from 0.25 so you can see it better */
+            filter: grayscale(0.5); /* Reduced grayscale */
+            transition: 0.8s; 
+        }
+        
+        .service-card:hover .card-img { opacity: 0.8; filter: grayscale(0); }
+        
+        .card-content { 
+            position: absolute; inset: 0; 
+            display: flex; align-items: flex-end; 
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8)); 
+        }
+        .card-content h3 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; }
+
+        /* Form Styling */
+        #details-form { 
+            display: none; opacity: 0; max-width: 600px; margin: 0 auto; 
+            background: var(--surface); padding: 40px; border: 1px solid var(--border);
+        }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.6rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase; }
+        input { 
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border); 
+            padding: 10px 0; color: white; outline: none; transition: 0.3s;
+        }
+        input:focus { border-bottom-color: var(--accent); }
+
+        /* Glow Button */
+        .submit-wrap { position: relative; margin-top: 30px; }
+        .submit-btn { 
+            width: 100%; background: var(--accent); color: black; border: none; 
+            padding: 20px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; 
+        }
+        .btn-glow {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--accent); filter: blur(15px); opacity: 0; transition: 0.4s;
+        }
+        .submit-wrap:hover .btn-glow { opacity: 0.4; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <span class="label">Collaborate</span>
+            <h1 id="header-title">What is your service?</h1>
+        </header>
+
+        <div class="selection-grid" id="step-1">
+            <div class="service-card" onclick="selectService('Grand Venues')">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1200');"></div>
+                <div class="card-content"><h3>Grand Venues</h3></div>
+            </div>
+
+            <div class="service-card" onclick="selectService('Gourmet Mastery')">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=1200');"></div>
+                <div class="card-content"><h3>Gourmet Mastery</h3></div>
+            </div>
+
+            <div class="service-card" onclick="selectService('Elite Planning')">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1200');"></div>
+                <div class="card-content"><h3>Elite Planning</h3></div>
+            </div>
+
+            <div class="service-card" onclick="selectService('Visual Storytelling')">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1711473610014-0505db6f6702?q=80&w=987&auto=format&fit=crop');"></div>
+                <div class="card-content"><h3>Visual Storytelling</h3></div>
+            </div>
+        </div>
+
+        <div id="details-form">
+            <h2 id="form-title" style="margin-bottom: 20px; font-family: 'Poppins';">Register</h2>
+            <form onsubmit="event.preventDefault(); alert('Registration Sent');">
+                <div class="form-group">
+                    <label>Business Name</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" required placeholder="+1 234 567 890">
+                </div>
+                <div class="form-group">
+                    <label>Location Map Link</label>
+                    <input type="url">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Capacity</label>
+                        <input type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>Rate</label>
+                        <input type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Available Date</label>
+                    <input type="date">
+                </div>
+                <div class="submit-wrap">
+                    <div class="btn-glow"></div>
+                    <button type="submit" class="submit-btn" style="position:relative; z-index:2;">Register Here</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function selectService(name) {
+            document.getElementById('form-title').innerText = `Register for ${name}`;
+            gsap.to("#step-1", { opacity: 0, y: -20, duration: 0.4, onComplete: () => {
+                document.getElementById('step-1').style.display = 'none';
+                const form = document.getElementById('details-form');
+                form.style.display = 'block';
+                gsap.to(form, { opacity: 1, y: 0, duration: 0.5 });
+            }});
+        }
+    </script>
+</body>
+</html>
