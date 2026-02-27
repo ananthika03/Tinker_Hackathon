@@ -4,23 +4,48 @@ from models import db, Venue, Service
 
 app = Flask(__name__)
 
-# This line automatically creates the database file in the right place
-# You don't need to install anything for this to work!
+# Database Configuration
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'event_booking.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-# This part ensures the database tables are created when you start the app
 with app.app_context():
     if not os.path.exists('instance'):
         os.makedirs('instance')
     db.create_all()
 
+# --- ROUTES ---
+
 @app.route('/')
+def start():
+    """The cinematic entry page."""
+    return render_template('start.html')
+
+@app.route('/landing')
 def index():
+    """The main customer landing page with the interactive globe."""
     return render_template('landing.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Handles role-based redirection."""
+    if request.method == 'POST':
+        # Capture the role from the hidden input field in login.html
+        role = request.form.get('role', 'customer').lower()
+        
+        if role == 'provider':
+            return redirect(url_for('provider_dashboard'))
+        else:
+            return redirect(url_for('index'))
+            
+    return render_template('login.html')
+
+@app.route('/providerdash')
+def provider_dashboard():
+    """The service provider dashboard."""
+    return render_template('providerdash.html')
 
 @app.route('/venues')
 def venues():
@@ -30,6 +55,7 @@ def venues():
 @app.route('/catering')
 def catering():
     return render_template('catering.html')
+
 @app.route('/architecture')
 def architecture():
     return render_template('architecture.html')
@@ -37,16 +63,6 @@ def architecture():
 @app.route('/visual')
 def visuals():
     return render_template('visual.html')
-
-
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        # This is where you'll eventually check the username/password
-        return redirect(url_for('index'))
-    return render_template('login.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
