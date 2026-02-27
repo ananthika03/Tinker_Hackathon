@@ -34,7 +34,7 @@ def catering():
 def architecture():
     return render_template('architecture.html')
 
-@app.route('/visuals')
+@app.route('/visual')
 def visuals():
     return render_template('visual.html')
 
