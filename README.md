@@ -105,7 +105,7 @@ python app.py
 ## Project Demo
 
 ### Video
-[Add your demo video link here - YouTube, Google Drive, etc.]
+[https://youtu.be/Co_nK8qYeWY]
 
 *Explain what the video demonstrates - key features, user flow, technical highlights*
 
