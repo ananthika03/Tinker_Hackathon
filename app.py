@@ -35,11 +35,20 @@ def login():
     if request.method == 'POST':
         # Capture the role from the hidden input field in login.html
         role = request.form.get('role', 'customer').lower()
-        
-        if role == 'provider':
-            return redirect(url_for('provider_dashboard'))
+        email = request.form.get("email")
+        password = request.form.get('password')
+
+        user = User.query.filter_by(email=email).first()
+
+        if user and user.password==password:
+            session['user_id']=user.id
+            if role == 'provider':
+                return redirect(url_for('provider_dashboard'))
+            else:
+                return redirect(url_for('index'))
         else:
-            return redirect(url_for('index'))
+            flash("Invalid creds")
+            return redirect(url_for('login'))
             
     return render_template('login.html')
 
