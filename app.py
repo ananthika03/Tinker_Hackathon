@@ -21,40 +21,63 @@ with app.app_context():
 
 @app.route('/')
 def start():
-    """The cinematic entry page."""
     return render_template('start.html')
 
 @app.route('/landing')
 def index():
-    """The main customer landing page with the interactive globe."""
     return render_template('landing.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        role = request.form.get('role') # 'customer' or 'provider'
+
+        # Check if email already exists
+        user_exists = User.query.filter_by(email=email).first()
+        if user_exists:
+            flash("Email already registered. Please login.")
+            return redirect(url_for('login'))
+
+        new_user = User(username=username, email=email, password=password, role=role)
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("Account created successfully! Please login.")
+        return redirect(url_for('login'))
+
+    return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Handles role-based redirection."""
     if request.method == 'POST':
-        # Capture the role from the hidden input field in login.html
-        role = request.form.get('role', 'customer').lower()
         email = request.form.get("email")
-        password = request.form.get('password')
+        password = request.form.get("password")
+        role = request.form.get("role")
 
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email, role=role).first()
 
-        if user and user.password==password:
-            session['user_id']=user.id
+        if user and user.password == password:
+            session['user_id'] = user.id
+            session['role'] = user.role
+
             if role == 'provider':
                 return redirect(url_for('provider_dashboard'))
             else:
                 return redirect(url_for('index'))
         else:
-            flash("Invalid creds")
+            flash("Invalid credentials.")
             return redirect(url_for('login'))
-            
+
     return render_template('login.html')
 
 @app.route('/providerdash')
 def provider_dashboard():
-    """The service provider dashboard."""
+    if 'role' not in session or session['role'] != 'provider':
+        flash("Unauthorized access.")
+        return redirect(url_for('login'))
     return render_template('providerdash.html')
 
 @app.route('/venues')
@@ -79,11 +102,11 @@ def contact():
     if request.method == 'POST':
         return redirect(url_for('index'))
     return render_template('contact.html')
+
 @app.route('/logout')
 def logout():
-   
     session.clear()
-    
     return redirect(url_for('start'))
+
 if __name__ == '__main__':
     app.run(debug=True)
