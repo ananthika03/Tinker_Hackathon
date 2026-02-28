@@ -8,7 +8,9 @@ app = Flask(__name__)
 app.secret_key = 'super_secret_key_change_this_later'
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'event_booking.db')
+print("DB PATH:", os.path.join(basedir, 'instance', 'event_booking.db'))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 db.init_app(app)
 
