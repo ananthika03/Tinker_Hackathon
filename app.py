@@ -1,7 +1,6 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
-from models import db, Venue, Service
-from flask import session, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from models import db, User, Venue, Service
 
 app = Flask(__name__)
 
