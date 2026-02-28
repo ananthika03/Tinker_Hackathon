@@ -200,8 +200,9 @@ If you used AI tools during development, document them here for transparency:
 ## Team Contributions
 
 - NEHA ANNA THOMAS: 1 Full-stack development, including backend logic with Flask, database architecture using SQLAlchemy, and frontend integration for service categories.
--ANANTHIKA BINEESH: Full-stack development, focusing on user authentication systems, UI/UX design for the landing and dashboard pages, and project documentation.
+- ANANTHIKA BINEESH: Full-stack development, focusing on user authentication systems, UI/UX design for the landing and dashboard pages, and project documentation.
   
+
 
 ---
 
